@@ -1,0 +1,41 @@
+Quy trình khởi động Emart:
+1. Bật Docker Desktop
+   
+   Mở Docker Desktop và đợi đến khi Docker báo đang chạy (Engine running).
+2. Mở VS Code
+
+3. Khởi động các container
+   
+   Mở Terminal trong VS Code, chạy:
+   docker compose up -d
+   
+4. Kiểm tra hệ thống
+   
+   Chạy:
+   docker compose ps
+   
+5. Tạo lại đường dẫn Cloudflare
+   Chạy: 
+
+   & "E:\CuaHang\tools\cloudflared.exe" tunnel --url http://localhost:3000
+   
+6. Truy cập Emart
+   
+   Mở đường dẫn mới trên trình duyệt để kiểm tra.
+node server/app.js
+Chủ cửa hàng:
+tài khoản: admin@emart.vn
+mk:123
+Thu ngân:
+tài khoản caishier@emart.vn
+mk:123
+Nhân viên nghỉ việc (Tài khoản đã khóa)
+Tài khoản minh.le@emart.vn
+mk:123
+USE StorePOS;
+GO
+
+SELECT TABLE_NAME
+FROM INFORMATION_SCHEMA.TABLES
+WHERE TABLE_TYPE = 'BASE TABLE'
+  AND TABLE_NAME = 'PaymentSettings';

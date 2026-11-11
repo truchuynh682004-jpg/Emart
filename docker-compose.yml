@@ -39,6 +39,9 @@ services:
       - type: bind
         source: ${BACKUP_HOST_PATH}
         target: /backup
+      - type: bind
+        source: ./server/uploads
+        target: /app/server/uploads
     depends_on:
       storepos-db:
         condition: service_healthy

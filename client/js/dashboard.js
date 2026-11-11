@@ -12,6 +12,7 @@ let activeTab = "overview";
 let salesChart = null;
 let currentFefoFilter = "all";
 let currentUploadedImageBase64 = "";
+let currentUploadedImageFile = null;
 
 // ===============================
 // CẬP NHẬT NGÀY KIỂM SOÁT FEFO
@@ -800,6 +801,8 @@ async function openAddProductModal() {
     document.getElementById("prod-image-url").value = "";
     document.getElementById("prod-image-file").value = "";
 
+    currentUploadedImageFile = null;
+
     currentUploadedImageBase64 =
         "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&auto=format&fit=crop&q=80";
 
@@ -834,21 +837,44 @@ function handleImageUrlInput(url) {
 }
 
 function handleImageFileUpload(event) {
-  const file = event.target.files[0];
-  if (file) {
+    const file = event.target.files[0];
+
+    if (!file) return;
+
+    // Giữ file ảnh gốc để gửi lên Server
+    currentUploadedImageFile = file;
+
+    // Đọc ảnh để hiển thị xem trước
     const reader = new FileReader();
+
     reader.onload = function(e) {
-      currentUploadedImageBase64 = e.target.result;
-      document.getElementById("prod-image-preview").src = currentUploadedImageBase64;
+        currentUploadedImageBase64 = e.target.result;
+
+        const preview = document.getElementById("prod-image-preview");
+
+        if (preview) {
+            preview.src = currentUploadedImageBase64;
+        }
     };
+
     reader.readAsDataURL(file);
-  }
 }
 
 function closeProductModal() {
-  const modal = document.getElementById("product-modal");
-  modal.classList.add("hidden");
-  modal.classList.remove("flex");
+    const modal = document.getElementById("product-modal");
+
+    modal.classList.add("hidden");
+    modal.classList.remove("flex");
+
+    // Xóa ảnh đã chọn để tránh gửi nhầm sang sản phẩm khác
+    currentUploadedImageBase64 = "";
+    currentUploadedImageFile = null;
+
+    // Xóa nội dung input file
+    const fileInput = document.getElementById("prod-image-file");
+    if (fileInput) {
+        fileInput.value = "";
+    }
 }
 
 
@@ -895,14 +921,6 @@ async function saveProductFromModal(e) {
     return;
   }
 
-  // Chưa hỗ trợ lưu ảnh dạng Base64
-  if (image.startsWith("data:")) {
-    showToast(
-      "Bạn hãy sử dụng URL ảnh online.",
-      "warning"
-    );
-    return;
-  }
 
   try {
     // Lấy danh mục từ SQL Server
@@ -955,25 +973,46 @@ async function saveProductFromModal(e) {
       CurrentStock: stock,
       MinStock: minStockAlert,
       ExpiryDate: expiryDate,
-      ImageURL: image,
+      ImageURL: currentUploadedImageFile ? "" : image,
       Unit: "Cái"
     };
 
     // Có ID thì cập nhật, không có ID thì thêm mới
     const isEditing = Boolean(productId);
+// Chuẩn bị dữ liệu gửi lên Backend
+let requestOptions;
 
-    const response = await fetch(
-      isEditing
-        ? `/api/products/${encodeURIComponent(productId)}`
-        : "/api/products",
-      {
+if (currentUploadedImageFile) {
+    // Có ảnh từ máy tính: gửi bằng FormData
+    const formData = new FormData();
+
+    Object.entries(payload).forEach(([key, value]) => {
+        formData.append(key, value ?? "");
+    });
+
+    formData.append("image", currentUploadedImageFile);
+
+    requestOptions = {
+        method: isEditing ? "PUT" : "POST",
+        body: formData
+    };
+} else {
+    // Không có ảnh mới: tiếp tục gửi JSON như trước
+    requestOptions = {
         method: isEditing ? "PUT" : "POST",
         headers: {
-          "Content-Type": "application/json"
+            "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
-      }
-    );
+    };
+}
+
+const response = await fetch(
+    isEditing
+        ? `/api/products/${encodeURIComponent(productId)}`
+        : "/api/products",
+    requestOptions
+);
 
     const result = await response.json();
 
@@ -1062,11 +1101,16 @@ async function editProduct(productId) {
   document.getElementById("prod-date").value =
     String(p.expiryDate || "").slice(0, 10);
 
-  const image = p.image || "";
+const image = p.image || "";
 
-  document.getElementById("prod-image-url").value = image;
-  currentUploadedImageBase64 = image;
-  document.getElementById("prod-image-preview").src = image;
+// Đặt lại file ảnh mới
+currentUploadedImageFile = null;
+document.getElementById("prod-image-file").value = "";
+
+// Giữ và hiển thị ảnh hiện tại
+document.getElementById("prod-image-url").value = image;
+currentUploadedImageBase64 = image;
+document.getElementById("prod-image-preview").src = image;
 
   try {
     await loadProductCategories(p.category || "");
@@ -2350,10 +2394,26 @@ function exportFilteredInvoicesToExcel() {
   );
 }
 
+
 function openInvoiceDetailModal(invoiceId) {
-  const invoices = getInvoices();
-  const inv = invoices.find(i => i.id === invoiceId);
-  if (!inv) return;
+    const invoices = Array.isArray(window.apiInvoicesCache)
+        && window.apiInvoicesCache.length > 0
+        ? window.apiInvoicesCache
+        : getInvoices();
+
+    const inv = invoices.find(
+        i => String(i.id) === String(invoiceId)
+    );
+
+    console.log("Invoice ID:", invoiceId);
+    console.log("Invoices:", invoices);
+    console.log("Found invoice:", inv);
+
+    if (!inv) {
+        showToast("Không tìm thấy hóa đơn!", "warning");
+        return;
+    }
+
 
   document.getElementById("inv-modal-id").innerText = inv.id;
   document.getElementById("inv-modal-time").innerText = inv.time;
@@ -2390,11 +2450,19 @@ function openInvoiceDetailModal(invoiceId) {
 }
 
 
+
 function printInvoiceBill() {
     const invoiceId = document.getElementById("inv-modal-id")?.innerText?.trim();
-    const invoices = getInvoices();
 
-    const inv = invoices.find(i => String(i.id) === String(invoiceId));
+    const invoices = Array.isArray(window.apiInvoicesCache)
+        && window.apiInvoicesCache.length > 0
+        ? window.apiInvoicesCache
+        : getInvoices();
+
+    const inv = invoices.find(
+        i => String(i.id) === String(invoiceId)
+    );
+
 
     if (!inv) {
         showToast("Không tìm thấy dữ liệu hóa đơn để in.", "error");

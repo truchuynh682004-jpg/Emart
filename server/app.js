@@ -24,6 +24,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.static(path.join(__dirname, "../client")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use("/api/categories", categoryRoutes);
 app.use("/api/products", productRoutes);

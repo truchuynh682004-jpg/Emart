@@ -142,7 +142,7 @@ const DEFAULT_STAFF = [
   {
     id: "st-01",
     email: "admin@emart.vn",
-    name: "Nguyễn Văn An",
+    name: "Admin",
     role: "Chủ cửa hàng",
     phone: "0901234567",
     shift: "Ca Hành Chính (08:00 - 17:00)",

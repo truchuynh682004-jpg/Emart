@@ -141,6 +141,26 @@ function playBeep(type = "success") {
 
   if (window.lucide) lucide.createIcons();
 }
+// Lọc sản phẩm theo danh mục tại quầy POS
+function setCategory(category) {
+    selectedCategory = category;
+
+    // Cập nhật trạng thái nút đang được chọn
+    document.querySelectorAll("#category-tabs .cat-btn").forEach(btn => {
+        const isActive =
+            btn.getAttribute("onclick") ===
+            `setCategory('${category}')`;
+
+        btn.classList.toggle("bg-[#005A2B]", isActive);
+        btn.classList.toggle("text-white", isActive);
+
+        btn.classList.toggle("bg-slate-100", !isActive);
+        btn.classList.toggle("text-slate-700", !isActive);
+    });
+
+    // Hiển thị lại sản phẩm theo danh mục
+    renderProducts();
+}
 
 // Add to Cart
 function addToCart(productId) {
@@ -1044,7 +1064,7 @@ function showReceiptModal(invoice, paid, change) {
   content.innerHTML = `
     <div class="text-center pb-3 border-b border-dashed border-slate-300">
       <h3 class="text-lg font-black text-slate-900 uppercase tracking-wide">SIÊU THỊ TIỆN LỢI EMART</h3>
-      <p class="text-[11px] text-slate-500">366 Phan Văn Trị, P.5, Q. Gò Vấp, TP.HCM</p>
+      <p class="text-[11px] text-slate-500">Biên Hòa Đồng Nai</p>
       <p class="text-[11px] text-slate-500">Hotline: 1900 6868 • Phục vụ 24/7</p>
       <div class="my-2 border-t border-dashed border-slate-300"></div>
       <h4 class="font-bold text-sm text-slate-800 uppercase">HÓA ĐƠN BÁN LẺ</h4>

@@ -91,7 +91,9 @@ exports.create = async (req, res) => {
             Unit,
             ProductCode
         } = req.body;
-
+                const finalImageURL = req.file
+            ? `/uploads/${req.file.filename}`
+            : (ImageURL || null);
         // Kiểm tra dữ liệu bắt buộc
         if (
             !ProductName ||
@@ -137,7 +139,7 @@ exports.create = async (req, res) => {
             .input("SellingPrice", require("mssql").Decimal(18, 2), Number(SellingPrice))
             .input("CurrentStock", require("mssql").Int, Number(CurrentStock))
             .input("MinStock", require("mssql").Int, Number(MinStock))
-            .input("ImageURL", require("mssql").NVarChar, ImageURL || null)
+            .input("ImageURL", require("mssql").NVarChar, finalImageURL)
             .input("ExpiryDate", require("mssql").Date, ExpiryDate)
             .query(`
                 INSERT INTO Products (
@@ -197,6 +199,9 @@ exports.update = async (req, res) => {
     ImageURL,
     ExpiryDate
 } = req.body;
+const finalImageURL = req.file
+    ? `/uploads/${req.file.filename}`
+    : (ImageURL || null);
 
         if (!Number.isInteger(productId) || productId <= 0) {
             return res.status(400).json({
@@ -288,7 +293,7 @@ exports.update = async (req, res) => {
 
 .input("CurrentStock", sql.Int, Number(CurrentStock))
             .input("MinStock", sql.Int, Number(MinStock))
-            .input("ImageURL", sql.NVarChar, ImageURL || null)
+            .input("ImageURL", sql.NVarChar, finalImageURL)
             .input("ExpiryDate", sql.Date, ExpiryDate)
             .query(`
                 UPDATE Products

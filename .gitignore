@@ -33,3 +33,6 @@ tmp/
 # Operating system
 .DS_Store
 Thumbs.db
+
+# Cloudflare Tunnel executable
+tools/cloudflared.exe

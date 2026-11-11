@@ -1,0 +1,4 @@
+CREATE DATABASE StorePOS;
+GO
+USE StorePOS;
+GO

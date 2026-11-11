@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Đăng Nhập - Emart Store System</title>
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFA500'><path d='M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'/></svg>" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-gradient-to-br from-[#005A2B]/10 via-[#FAF6EF] to-[#FFD700]/20 min-h-screen flex flex-col justify-between">
+
+  <!-- Top bar back to home -->
+  <div class="p-4 max-w-7xl mx-auto w-full flex justify-between items-center">
+    <a href="index.html" class="inline-flex items-center gap-2 text-xs font-bold text-[#005A2B] hover:text-[#0B6A36] bg-white px-3 py-1.5 rounded-xl border border-[#E0C9A6] shadow-xs">
+      <i data-lucide="arrow-left" class="w-4 h-4"></i>
+      <span>Trang chủ</span>
+    </a>
+    <span class="text-xs text-slate-500 font-medium">Hệ thống Emart Tiện Lợi • Chi nhánh 366 Phan Văn Trị</span>
+  </div>
+
+  <!-- Login Box -->
+  <div class="max-w-md w-full mx-auto p-4 my-auto">
+    <div class="bg-white rounded-3xl border border-[#E0C9A6] shadow-xl p-6 sm:p-8 space-y-6">
+      
+      <!-- Brand Logo Header -->
+      <div class="text-center space-y-2">
+        <div class="w-14 h-14 rounded-2xl bg-[#FFA500] text-slate-950 flex items-center justify-center mx-auto shadow-md">
+          <i data-lucide="shopping-basket" class="w-8 h-8"></i>
+        </div>
+        <h2 class="text-2xl font-black text-[#005A2B]">Đăng Nhập Hệ Thống</h2>
+        <p class="text-xs text-slate-500">Vui lòng nhập thông tin xác thực và chọn vai trò làm việc</p>
+      </div>
+
+      <!-- Error Alert Message -->
+      <div id="login-error" class="hidden p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2">
+        <i data-lucide="alert-circle" class="w-4 h-4 shrink-0"></i>
+        <span id="login-error-text">Tài khoản hoặc mật khẩu không chính xác!</span>
+      </div>
+
+      <!-- Login Form -->
+      <form id="login-form" class="space-y-4">
+        <!-- Role Selection (Bắt buộc chọn vai trò) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Vai trò làm việc <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <select 
+              id="login-role" 
+              required 
+              class="w-full px-3.5 py-2.5 pl-10 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#005A2B] focus:ring-2 focus:ring-[#005A2B]/20 outline-hidden text-sm font-semibold text-slate-800 transition cursor-pointer"
+            >
+              <option value="" disabled selected>-- Vui lòng chọn vai trò --</option>
+              <option value="Chủ cửa hàng">Chủ cửa hàng / Quản lý</option>
+              <option value="Nhân viên thu ngân">Nhân viên thu ngân (Quầy POS)</option>
+            </select>
+            <i data-lucide="user-check" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          </div>
+        </div>
+
+        <!-- Account / Email Input (Bắt buộc nhập) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Tài khoản / Email <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="email" 
+              id="login-email" 
+              required 
+              placeholder="Nhập email tài khoản..." 
+              value=""
+              class="w-full px-3.5 py-2.5 pl-10 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#005A2B] focus:ring-2 focus:ring-[#005A2B]/20 outline-hidden text-sm font-medium transition"
+            >
+            <i data-lucide="mail" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          </div>
+        </div>
+
+        <!-- Password Input (Bắt buộc nhập) -->
+        <div>
+          <label class="block text-xs font-bold text-slate-700 mb-1">
+            Mật khẩu <span class="text-red-500">*</span>
+          </label>
+          <div class="relative">
+            <input 
+              type="password" 
+              id="login-password" 
+              required 
+              placeholder="Nhập mật khẩu của bạn..." 
+              value=""
+              class="w-full px-3.5 py-2.5 pl-10 rounded-xl bg-slate-50 border border-slate-200 focus:bg-white focus:border-[#005A2B] focus:ring-2 focus:ring-[#005A2B]/20 outline-hidden text-sm font-medium transition"
+            >
+            <i data-lucide="lock" class="w-4 h-4 text-slate-400 absolute left-3.5 top-3"></i>
+          </div>
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full py-3 rounded-xl bg-[#005A2B] hover:bg-[#0B6A36] text-[#FFD700] font-black text-sm transition shadow-md flex items-center justify-center gap-2 cursor-pointer"
+        >
+          <span>ĐĂNG NHẬP VÀO HỆ THỐNG</span>
+          <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        </button>
+      </form>
+
+    </div>
+  </div>
+
+  <!-- Bottom info -->
+  <div class="p-4 text-center text-xs text-slate-400">
+    Emart Convenience Store System • Hệ thống bảo mật thông tin & phân quyền truy cập
+  </div>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const role = document.getElementById('login-role').value;
+      const email = document.getElementById('login-email').value.trim();
+      const pass = document.getElementById('login-password').value.trim();
+
+      const errBox = document.getElementById('login-error');
+      const errText = document.getElementById('login-error-text');
+
+      if (!role) {
+        errBox.classList.remove('hidden');
+        errText.innerText = "Vui lòng chọn vai trò làm việc!";
+        return;
+      }
+
+      const res = await login(email, pass, role);
+
+      if (res.success) {
+        if (res.user.role === 'Chủ cửa hàng') {
+          window.location.href = 'dashboard.html';
+        } else {
+          window.location.href = 'pos.html';
+        }
+      } else {
+        errBox.classList.remove('hidden');
+        errText.innerText = res.message;
+      }
+    });
+
+    document.addEventListener("DOMContentLoaded", () => {
+      if (window.lucide) lucide.createIcons();
+    });
+  </script>
+</body>
+</html>

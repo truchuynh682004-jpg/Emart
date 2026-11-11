@@ -1,0 +1,45 @@
+
+services:
+  storepos-db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: storepos-db
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: "Express"
+      MSSQL_SA_PASSWORD: ${DOCKER_DB_PASSWORD:?Please set DOCKER_DB_PASSWORD in .env}
+    volumes:
+      - ./docker-data:/var/opt/mssql/data
+      - type: bind
+        source: ${BACKUP_HOST_PATH}
+        target: /var/opt/mssql/backup
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  storepos-app:
+    build: .
+    container_name: storepos-app
+    ports:
+      - "3000:3000"
+    environment:
+      PORT: 3000
+      DB_SERVER: storepos-db
+      DB_DATABASE: StorePOS
+      DB_USER: sa
+      DB_PASSWORD: ${DOCKER_DB_PASSWORD:?Please set DOCKER_DB_PASSWORD in .env}
+      DB_PORT: 1433
+      ENABLE_PRODUCTION_RESTORE: "false"
+      BACKUP_ROOT: /backup
+      BACKUP_SQL_ROOT: /var/opt/mssql/backup
+    volumes:
+      - type: bind
+        source: ${BACKUP_HOST_PATH}
+        target: /backup
+    depends_on:
+      storepos-db:
+        condition: service_healthy
+    restart: unless-stopped

@@ -1,0 +1,8 @@
+IF DB_ID('StorePOS') IS NULL
+BEGIN
+    CREATE DATABASE StorePOS;
+END
+GO
+
+USE StorePOS;
+GO

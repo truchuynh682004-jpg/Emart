@@ -1,0 +1,679 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <div>
+
+        <h3 class="mb-1">
+            Quản lý danh mục
+        </h3>
+
+        <p class="text-muted mb-0">
+            Quản lý các nhóm sản phẩm trong cửa hàng
+        </p>
+
+    </div>
+
+
+    <button
+        class="btn btn-primary"
+        onclick="openCategoryForm()"
+    >
+
+        <i class="fa-solid fa-plus"></i>
+
+        Thêm danh mục
+
+    </button>
+
+</div>
+
+
+
+<!-- ======================================== -->
+<!-- FORM THÊM DANH MỤC -->
+<!-- ======================================== -->
+
+<div
+    id="categoryForm"
+    class="card shadow-sm border-0 mb-4"
+    style="display: none;"
+>
+
+    <div class="card-header bg-primary text-white">
+
+        <strong id="categoryFormTitle">
+    <i class="fa-solid fa-folder-plus"></i>
+    Thêm danh mục mới
+</strong>
+
+    </div>
+
+
+    <div class="card-body">
+
+        <form id="addCategoryForm">
+
+            <div class="row g-3">
+
+                <!-- Mã danh mục -->
+                <div class="col-md-4">
+
+                    <label class="form-label">
+                        Mã danh mục
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoryCode"
+                        class="form-control"
+                        placeholder="Ví dụ: DM006"
+                        maxlength="20"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Tên danh mục -->
+                <div class="col-md-8">
+
+                    <label class="form-label">
+                        Tên danh mục
+                        <span class="text-danger">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="categoryName"
+                        class="form-control"
+                        placeholder="Ví dụ: Đồ uống"
+                        maxlength="100"
+                        required
+                    >
+
+                </div>
+
+
+                <!-- Mô tả -->
+                <div class="col-12">
+
+                    <label class="form-label">
+                        Mô tả
+                    </label>
+
+                    <textarea
+                        id="categoryDescription"
+                        class="form-control"
+                        rows="3"
+                        placeholder="Nhập mô tả danh mục..."
+                        maxlength="255"
+                    ></textarea>
+
+                </div>
+
+
+                <!-- Nút -->
+                <div class="col-12">
+
+                    <button
+                        type="submit"
+                        class="btn btn-success"
+                    >
+
+                        <i class="fa-solid fa-save"></i>
+
+                        Lưu danh mục
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary ms-2"
+                        onclick="closeCategoryForm()"
+                    >
+
+                        <i class="fa-solid fa-xmark"></i>
+
+                        Hủy
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================== -->
+<!-- DANH SÁCH DANH MỤC -->
+<!-- ======================================== -->
+
+<div class="card shadow-sm border-0">
+
+    <div class="card-body">
+
+        <div class="table-responsive">
+
+            <table
+                class="table table-bordered table-hover align-middle mb-0"
+            >
+
+                <thead class="table-dark">
+
+                    <tr>
+
+                        <th style="width: 80px;">
+                            ID
+                        </th>
+
+                        <th style="width: 150px;">
+                            Mã danh mục
+                        </th>
+
+                        <th>
+                            Tên danh mục
+                        </th>
+
+                        <th>
+                            Mô tả
+                        </th>
+
+                        <th style="width: 150px;">
+                            Thao tác
+                        </th>
+
+                    </tr>
+
+                </thead>
+
+
+                <tbody id="categoryTable">
+
+                    <tr>
+
+                        <td
+                            colspan="5"
+                            class="text-center"
+                        >
+
+                            Đang tải dữ liệu...
+
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- ======================================== -->
+<!-- JAVASCRIPT -->
+<!-- ======================================== -->
+
+<script>
+
+
+// ========================================
+// HIỆN FORM
+// ========================================
+
+function openCategoryForm() {
+
+    document.getElementById("categoryForm").style.display = "block";
+
+    document.getElementById("categoryCode").focus();
+
+}
+
+
+
+// ========================================
+// ĐÓNG FORM
+// ========================================
+
+function closeCategoryForm() {
+
+    document.getElementById("categoryForm").style.display = "none";
+
+    document.getElementById("addCategoryForm").reset();
+
+
+    // Xóa trạng thái đang sửa
+
+    editingCategoryId = null;
+
+
+    // Đưa tiêu đề về Thêm
+
+    document.getElementById("categoryFormTitle").innerHTML = `
+        <i class="fa-solid fa-folder-plus"></i>
+        Thêm danh mục mới
+    `;
+
+
+    // Đưa nút về Lưu danh mục
+
+    const submitButton =
+        document.querySelector(
+            '#addCategoryForm button[type="submit"]'
+        );
+
+    submitButton.innerHTML = `
+        <i class="fa-solid fa-save"></i>
+        Lưu danh mục
+    `;
+
+}
+
+// ========================================
+// ID DANH MỤC ĐANG SỬA
+// ========================================
+
+let editingCategoryId = null;
+
+
+// ========================================
+// HIỂN THỊ DANH SÁCH
+// ========================================
+
+async function loadCategories() {
+
+    const table =
+        document.getElementById("categoryTable");
+
+
+    table.innerHTML = `
+        <tr>
+            <td colspan="5" class="text-center">
+                Đang tải dữ liệu...
+            </td>
+        </tr>
+    `;
+
+
+    const categories = await getCategories();
+
+
+    if (!categories || categories.length === 0) {
+
+        table.innerHTML = `
+            <tr>
+                <td
+                    colspan="5"
+                    class="text-center text-muted"
+                >
+                    Chưa có danh mục
+                </td>
+            </tr>
+        `;
+
+        return;
+
+    }
+
+
+    table.innerHTML = categories.map(category => `
+
+        <tr>
+
+            <td>
+                ${category.CategoryID}
+            </td>
+
+
+            <td>
+
+                <span class="badge bg-primary">
+
+                    ${category.CategoryCode}
+
+                </span>
+
+            </td>
+
+
+            <td>
+
+                <strong>
+                    ${category.CategoryName}
+                </strong>
+
+            </td>
+
+
+            <td>
+
+                ${category.Description || ""}
+
+            </td>
+
+
+            <td>
+
+                <button
+    class="btn btn-sm btn-warning"
+    title="Sửa"
+    onclick="openEditCategoryForm(${category.CategoryID})"
+>
+    <i class="fa-solid fa-pen"></i>
+</button>
+
+<button
+    class="btn btn-sm btn-danger"
+    title="Xóa"
+    onclick="deleteCategoryItem(${category.CategoryID})"
+>
+    <i class="fa-solid fa-trash"></i>
+</button>
+
+            </td>
+
+        </tr>
+
+    `).join("");
+
+}
+
+// ========================================
+// MỞ FORM SỬA DANH MỤC
+// ========================================
+
+async function openEditCategoryForm(categoryId) {
+
+    try {
+
+        const categories = await getCategories();
+
+        const category = categories.find(
+            item => item.CategoryID === categoryId
+        );
+
+
+        if (!category) {
+
+            alert("Không tìm thấy danh mục.");
+
+            return;
+
+        }
+
+
+        // Lưu ID đang sửa
+
+        editingCategoryId = categoryId;
+
+
+        // Điền dữ liệu cũ vào form
+
+        document.getElementById("categoryCode").value =
+            category.CategoryCode;
+
+        document.getElementById("categoryName").value =
+            category.CategoryName;
+
+        document.getElementById("categoryDescription").value =
+            category.Description || "";
+
+
+        // Đổi tiêu đề form
+
+        document.getElementById("categoryFormTitle").innerHTML = `
+            <i class="fa-solid fa-pen"></i>
+            Sửa danh mục
+        `;
+
+
+        // Đổi chữ nút lưu
+
+        const submitButton =
+            document.querySelector(
+                '#addCategoryForm button[type="submit"]'
+            );
+
+        submitButton.innerHTML = `
+            <i class="fa-solid fa-save"></i>
+            Lưu thay đổi
+        `;
+
+
+        // Hiện form
+
+        document.getElementById("categoryForm").style.display =
+            "block";
+
+
+        // Focus vào tên
+
+        document.getElementById("categoryName").focus();
+
+
+        // Cuộn lên form
+
+        document.getElementById("categoryForm")
+            .scrollIntoView({
+                behavior: "smooth"
+            });
+
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Không thể mở thông tin danh mục.");
+
+    }
+
+}
+async function deleteCategoryItem(categoryId) {
+
+    const confirmed = confirm(
+        "Bạn có chắc chắn muốn xóa danh mục này không?"
+    );
+
+    if (!confirmed) {
+        return;
+    }
+
+    try {
+
+        const result = await removeCategory(categoryId);
+
+        alert(result.message);
+
+        await loadCategories();
+
+    } catch (error) {
+
+        alert(error.message);
+
+    }
+}
+
+// ========================================
+// XỬ LÝ THÊM DANH MỤC
+// ========================================
+
+document
+    .getElementById("addCategoryForm")
+    .addEventListener("submit", async function(event) {
+
+        event.preventDefault();
+
+
+        // Lấy dữ liệu từ form
+
+        const CategoryCode =
+            document
+                .getElementById("categoryCode")
+                .value
+                .trim();
+
+
+        const CategoryName =
+            document
+                .getElementById("categoryName")
+                .value
+                .trim();
+
+
+        const Description =
+            document
+                .getElementById("categoryDescription")
+                .value
+                .trim();
+
+
+
+        // Kiểm tra dữ liệu
+
+        if (!CategoryCode) {
+
+            alert("Vui lòng nhập mã danh mục.");
+
+            document
+                .getElementById("categoryCode")
+                .focus();
+
+            return;
+
+        }
+
+
+        if (!CategoryName) {
+
+            alert("Vui lòng nhập tên danh mục.");
+
+            document
+                .getElementById("categoryName")
+                .focus();
+
+            return;
+
+        }
+
+
+
+        // Khóa nút trong lúc gửi
+
+        const submitButton =
+            event.target.querySelector(
+                'button[type="submit"]'
+            );
+
+
+        submitButton.disabled = true;
+
+        submitButton.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Đang lưu...
+        `;
+
+
+
+        try {
+
+            // Gửi dữ liệu xuống Backend
+
+            let result;
+
+
+// ========================================
+// TRƯỜNG HỢP THÊM
+// ========================================
+
+if (editingCategoryId === null) {
+
+    result = await createCategory({
+
+        CategoryCode,
+        CategoryName,
+        Description
+
+    });
+
+}
+
+
+// ========================================
+// TRƯỜNG HỢP SỬA
+// ========================================
+
+else {
+
+    result = await updateCategory(
+
+        editingCategoryId,
+
+        {
+            CategoryCode,
+            CategoryName,
+            Description
+        }
+
+    );
+
+}
+
+
+            // Thành công
+
+            alert(result.message);
+
+
+            // Đóng form
+
+            closeCategoryForm();
+
+
+            // Tải lại danh sách
+
+            await loadCategories();
+
+
+        } catch (error) {
+
+            // Có lỗi
+
+            alert(error.message);
+
+
+        } finally {
+
+            // Mở lại nút
+
+            submitButton.disabled = false;
+
+            submitButton.innerHTML = `
+                <i class="fa-solid fa-save"></i>
+                Lưu danh mục
+            `;
+
+        }
+
+    });
+
+
+
+// ========================================
+// CHẠY KHI MỞ TRANG
+// ========================================
+
+loadCategories();
+
+
+</script>

@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Emart - Quản Lý Cửa Hàng Tiện Lợi & Quầy Bán Hàng POS</title>
+  <meta name="description" content="Hệ thống Emart StorePOS - Quản lý cửa hàng tiện lợi: Bán hàng tại quầy POS, quản lý hàng hóa, kiểm soát hạn sử dụng date FEFO, quản lý nhân viên và doanh thu." />
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23FFA500'><path d='M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z'/></svg>" />
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-[#F8FAFC] text-slate-800 flex flex-col min-h-screen">
+
+  <!-- TOP BAR (Vàng chanh #FFD700) -->
+  <div class="bg-gradient-to-r from-[#FFD700] via-[#FFCC00] to-[#FFD700] text-[#005A2B] text-xs sm:text-sm py-2 px-4 font-bold border-b border-[#E0C9A6]">
+    <div class="max-w-7xl mx-auto flex flex-wrap justify-between items-center gap-2">
+      <div class="flex items-center gap-2">
+        <i data-lucide="map-pin" class="w-3.5 h-3.5"></i>
+        <span>Emart - Quản lý cửa hàng tiện lợi • Chi nhánh 366 Phan Văn Trị, Q. Gò Vấp</span>
+        <span class="hidden md:inline text-[#005A2B]/40">|</span>
+        <span class="hidden md:flex items-center gap-1">
+          <i data-lucide="store" class="w-3.5 h-3.5"></i>
+          <span>Phục vụ liên tục 24/7</span>
+        </span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="flex items-center gap-1">
+          <i data-lucide="phone" class="w-3.5 h-3.5"></i>
+          <span>Hotline: <strong>1900 6868</strong></span>
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN HEADER -->
+  <header class="bg-white border-b border-[#F5E6D3] sticky top-0 z-50 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
+      <!-- Logo Giỏ hàng cam Emart (Bên trái) -->
+      <a href="index.html" class="flex items-center gap-3 select-none">
+        <div class="w-10 h-10 rounded-2xl bg-[#FFA500] text-slate-950 flex items-center justify-center shadow-md">
+          <i data-lucide="shopping-basket" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="flex items-center text-xl sm:text-2xl font-black tracking-tight text-[#005A2B]">
+            <span>Emart</span>
+            <span class="text-[#FFA500] font-normal mx-1.5 text-lg">•</span>
+            <span class="text-base sm:text-lg font-extrabold text-[#005A2B]">Quản lý cửa hàng tiện lợi</span>
+          </div>
+          <p class="text-[11px] font-semibold text-slate-500 -mt-0.5 hidden sm:block">
+            Hệ thống Bán Lẻ Quầy POS & Quản Trị Chuỗi Tiện Lợi • FEFO Date
+          </p>
+        </div>
+      </a>
+
+     
+<!-- Navigation Buttons (Bên phải) -->
+<nav class="flex items-center gap-2 sm:gap-3">
+    <a href="#section-pos"
+       onclick="event.preventDefault(); const posEl = document.getElementById('section-pos'); if (posEl) posEl.scrollIntoView({ behavior: 'smooth' });">
+        <i data-lucide="store" class="w-4 h-4 text-[#FFA500] shrink-0"></i>
+        <span>Quầy POS</span>
+    </a>
+
+    <a href="#section-admin"
+       onclick="event.preventDefault(); const adminEl = document.getElementById('section-admin'); if (adminEl) adminEl.scrollIntoView({ behavior: 'smooth' });">
+        <i data-lucide="layout-dashboard" class="w-4 h-4 text-[#005A2B] shrink-0"></i>
+        <span>Quản trị</span>
+    </a>
+
+    <a href="#section-login"
+       onclick="event.preventDefault(); const loginEl = document.getElementById('section-login'); if (loginEl) loginEl.scrollIntoView({ behavior: 'smooth' });">
+        <i data-lucide="log-in" class="w-4 h-4 text-[#005A2B] shrink-0"></i>
+        <span>Đăng nhập</span>
+    </a>
+</nav>
+
+    </div>
+  </header>
+
+  <!-- HERO SECTION WITH CONVENIENCE STORE BACKGROUND -->
+  <section class="relative text-white pt-10 md:pt-14 pb-10 md:pb-12 min-h-[520px] md:min-h-[580px] flex flex-col justify-between overflow-hidden leading-[1.5]">
+    <!-- Convenience Store Background Image with Reduced Green Overlay -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=1600&auto=format&fit=crop&q=80" 
+        alt="Cửa hàng tiện lợi Emart" 
+        class="w-full h-full object-cover object-center filter brightness-95 contrast-105"
+      >
+      <!-- Giảm màu xanh của hình cửa hàng để thấy rõ màu sắc tự nhiên của cửa hàng -->
+      <div class="absolute inset-0 bg-gradient-to-r from-black/35 via-[#005A2B]/10 to-black/30"></div>
+      <div class="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/45 to-transparent"></div>
+    </div>
+
+    <div class="max-w-7xl w-full mx-auto px-4 relative z-10 flex-1 flex flex-col justify-between">
+      <!-- HÀNG TRÊN: TIÊU ĐỀ CHÍNH NẰM NGANG VỚI KHUNG MÔ TẢ TRẮNG TRONG SUỐT (KHUNG MÔ TẢ DỊCH XUỐNG MỘT CHÚT) -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-start pt-2 md:pt-4">
+        <div class="lg:col-span-6">
+          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.4] drop-shadow-lg">
+            Giải Pháp Quản Lý <br>
+            <span class="text-[#FFD700] drop-shadow-md">Cửa Hàng Tiện Lợi & Quầy POS</span>
+          </h1>
+        </div>
+
+        <!-- Khung mô tả nền trong suốt trắng sáng đặt ngang với tiêu đề và xích xuống dưới 1 chút -->
+        <div class="lg:col-span-6 lg:mt-8 xl:mt-10">
+          <p class="text-white drop-shadow-md text-sm sm:text-base py-5 px-6 leading-[1.65] font-medium bg-white/25 backdrop-blur-md rounded-2xl border border-white/45 shadow-xl">
+            Đầy đủ quy trình bán hàng quầy thu ngân tốc độ cao, quản trị kho hàng theo nguyên tắc <strong class="text-[#FFD700]">FEFO (First Expired, First Out)</strong>, cảnh báo cận date tự động xả hàng và quản lý thành viên CRM. Vui lòng <strong class="text-[#FFD700]">đăng nhập tài khoản</strong> bên dưới để truy cập đúng phân quyền làm việc.
+          </p>
+        </div>
+      </div>
+
+      <!-- HÀNG DƯỚI: CÁC CHỨC NĂNG CỐT LÕI RÚT GỌN ĐỂ NGANG NHAU (NHÍCH LÊN KHOẢNG 1CM TỪ ĐÁY HÌNH) -->
+      <div class="mt-14 md:mt-20 bg-black/25 backdrop-blur-md p-4 sm:p-5 rounded-3xl border border-white/25 shadow-2xl space-y-3 leading-[1.5]">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-1 pb-2 border-b border-white/20">
+          <h2 class="text-base sm:text-lg font-extrabold text-[#FFD700] tracking-wide leading-[1.5] drop-shadow-sm">
+            Các Chức Năng Cốt Lõi Của Hệ Thống
+          </h2>
+          <p class="text-xs text-white/90 leading-[1.5]">
+            Vận hành chuẩn thực tế chuỗi cửa hàng tiện lợi hiện đại
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3.5 text-white">
+          <!-- Feature 1 -->
+          <div class="p-3.5 rounded-2xl bg-black/35 backdrop-blur-md border border-white/20 shadow-sm flex items-start gap-3 hover:bg-black/45 transition">
+            <div class="w-10 h-10 rounded-xl bg-[#005A2B] text-[#FFD700] border border-white/20 flex items-center justify-center shrink-0 shadow-xs">
+              <i data-lucide="shopping-cart" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-[#FFD700] leading-[1.4] drop-shadow-xs">Quầy Thu Ngân POS Tốc Độ Cao</h3>
+              <p class="text-white/95 text-xs mt-1 leading-[1.45]">
+                Quét mã vạch nhanh, thanh toán Tiền mặt / QR và in hóa đơn chuẩn 80mm.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 2 -->
+          <div class="p-3.5 rounded-2xl bg-black/35 backdrop-blur-md border border-white/20 shadow-sm flex items-start gap-3 hover:bg-black/45 transition">
+            <div class="w-10 h-10 rounded-xl bg-[#FFA500] text-slate-950 border border-white/20 flex items-center justify-center shrink-0 shadow-xs">
+              <i data-lucide="calendar" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-[#FFD700] leading-[1.4] drop-shadow-xs">Quản Lý Date FEFO & Xả Hàng</h3>
+              <p class="text-white/95 text-xs mt-1 leading-[1.45]">
+                Kiểm soát hạn dùng từng lô, cảnh báo cận date 1–3 ngày để tự động giảm giá.
+              </p>
+            </div>
+          </div>
+
+          <!-- Feature 3 -->
+          <div class="p-3.5 rounded-2xl bg-black/35 backdrop-blur-md border border-white/20 shadow-sm flex items-start gap-3 hover:bg-black/45 transition">
+            <div class="w-10 h-10 rounded-xl bg-[#0B6A36] text-white border border-white/20 flex items-center justify-center shrink-0 shadow-xs">
+              <i data-lucide="users" class="w-5 h-5"></i>
+            </div>
+            <div class="min-w-0">
+              <h3 class="text-sm font-bold text-[#FFD700] leading-[1.4] drop-shadow-xs">Tích Điểm CRM & Phân Quyền</h3>
+              <p class="text-white/95 text-xs mt-1 leading-[1.45]">
+                Tích điểm hội viên qua SĐT, giảm trừ trực tiếp và phân quyền Chủ quầy / Thu ngân.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHU VỰC ĐĂNG NHẬP & MÔ TẢ QUẦY POS / QUẢN TRỊ (NẰM NGANG NHAU TRÊN NỀN ĐẶC SẮC) -->
+  <section class="relative py-12 md:py-16 flex-1 overflow-hidden leading-[1.5]">
+    <!-- Nền trang trí có chiều sâu (Hình không gian kệ hàng mờ nhẹ + Dải chuyển sắc Xanh Ngọc & Vàng Kem Emart) -->
+    <div class="absolute inset-0 z-0">
+      <img 
+        src="https://images.unsplash.com/photo-1604719312566-8912e9227c6a?w=1600&auto=format&fit=crop&q=80" 
+        alt="Không gian cửa hàng Emart" 
+        class="w-full h-full object-cover object-center opacity-20"
+      >
+      <div class="absolute inset-0 bg-gradient-to-br from-[#005A2B]/15 via-[#FAF6EF]/90 to-[#FFA500]/20"></div>
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 relative z-10">
+      <div class="grid grid-cols-1 lg:grid-cols-[55fr_45fr] gap-6 lg:gap-8 items-stretch">
+        
+        <!-- CỘT TRÁI (CHIẾM 55% CHIỀU NGANG): ĐĂNG NHẬP HỆ THỐNG NỀN XANH NHẠT HIỆN ĐẠI -->
+        <div id="section-login" class="scroll-mt-20 flex">
+          <div class="bg-gradient-to-br from-[#E3F6EC] via-[#CEEFDD] to-[#B8E6CD] text-slate-800 rounded-3xl border-2 border-[#75D49E] shadow-xl p-5 sm:p-6 lg:p-7 w-full flex flex-col justify-between gap-5 relative overflow-hidden">
+            
+            <!-- Họa tiết trang trí góc nhẹ nhàng -->
+            <div class="-top-16 -right-16 w-40 h-40 rounded-full bg-[#10B981]/15 blur-2xl pointer-events-none absolute"></div>
+            <div class="-bottom-16 -left-16 w-40 h-40 rounded-full bg-[#FFD700]/20 blur-2xl pointer-events-none absolute"></div>
+
+            <!-- Header Đăng Nhập -->
+            <div class="flex items-center justify-between gap-3 pb-3.5 border-b border-[#8ED9AE] relative z-10">
+              <div class="flex items-center gap-3">
+                <div class="w-11 h-11 rounded-2xl bg-gradient-to-br from-[#005A2B] to-[#0D7A40] text-[#FFD700] flex items-center justify-center shadow-md border-2 border-white shrink-0">
+                  <i data-lucide="shield-check" class="w-6 h-6"></i>
+                </div>
+                <div>
+                  <span class="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-wider text-[#005A2B] bg-white/80 px-2 py-0.5 rounded-full border border-[#8ED9AE]">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                    Cổng Xác Thực Nội Bộ
+                  </span>
+                  <h2 class="text-xl sm:text-2xl font-black text-[#004D25] leading-[1.3] mt-0.5">Đăng Nhập Hệ Thống</h2>
+                </div>
+              </div>
+            </div>
+
+            <!-- Error Alert Message -->
+            <div id="home-login-error" class="hidden w-full p-3.5 rounded-2xl bg-red-50 border-2 border-red-300 text-red-700 text-xs sm:text-sm font-bold flex items-center gap-2.5 leading-[1.5] shadow-xs relative z-10">
+              <i data-lucide="alert-circle" class="w-5 h-5 text-red-600 shrink-0"></i>
+              <span id="home-login-error-text">Tài khoản hoặc mật khẩu không chính xác!</span>
+            </div>
+
+            <!-- Login Form (To rõ, rộng đầy khung 55%) -->
+            <form id="home-login-form" class="space-y-4 relative z-10 my-auto w-full">
+              <div class="bg-white/90 backdrop-blur-xs p-5 sm:p-6 rounded-2xl border border-white shadow-sm space-y-4">
+                <div>
+                  <label for="home-login-role" class="block text-sm sm:text-base font-extrabold text-[#004D25] mb-1.5 leading-[1.5]">
+                    1. Chọn vai trò làm việc <span class="text-red-500">*</span>
+                  </label>
+                  <div class="relative">
+                    <select 
+                      id="home-login-role" 
+                      required 
+                      onchange="handleRoleSelectChange(this.value)"
+                      class="w-full px-4 py-3.5 pl-12 rounded-xl bg-[#F8FDF9] text-slate-900 border-2 border-[#A3E4BE] focus:border-[#005A2B] focus:bg-white focus:ring-3 focus:ring-[#005A2B]/15 outline-hidden text-sm sm:text-base font-bold transition cursor-pointer"
+                    >
+                      <option value="" disabled selected>-- Vui lòng chọn vai trò đăng nhập --</option>
+                      <option value="Chủ cửa hàng">👑 Chủ cửa hàng (Vào ngay Trang Quản Trị)</option>
+                      <option value="Nhân viên thu ngân">🧑‍💼 Nhân viên thu ngân (Vào Quầy POS & Kho)</option>
+                    </select>
+                    <div class="w-8 h-8 rounded-lg bg-[#E3F6EC] text-[#005A2B] flex items-center justify-center absolute left-2.5 top-2.5 pointer-events-none">
+                      <i data-lucide="user-check" class="w-4 h-4"></i>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="space-y-4">
+                  <div>
+                    <label for="home-login-email" class="block text-sm sm:text-base font-extrabold text-[#004D25] mb-1.5 leading-[1.5]">
+                      2. Tài khoản / Email <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <input 
+                        type="email" 
+                        id="home-login-email" 
+                        required 
+                        placeholder="Nhập email tài khoản..." 
+                        class="w-full px-4 py-3.5 pl-12 rounded-xl bg-[#F8FDF9] text-slate-900 border-2 border-[#A3E4BE] focus:border-[#005A2B] focus:bg-white focus:ring-3 focus:ring-[#005A2B]/15 outline-hidden text-sm sm:text-base font-semibold transition"
+                      >
+                      <div class="w-8 h-8 rounded-lg bg-[#E3F6EC] text-[#005A2B] flex items-center justify-center absolute left-2.5 top-2.5 pointer-events-none">
+                        <i data-lucide="mail" class="w-4 h-4"></i>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label for="home-login-password" class="block text-sm sm:text-base font-extrabold text-[#004D25] mb-1.5 leading-[1.5]">
+                      3. Mật khẩu <span class="text-red-500">*</span>
+                    </label>
+                    <div class="relative">
+                      <input 
+                        type="password" 
+                        id="home-login-password" 
+                        required 
+                        placeholder="Nhập mật khẩu của bạn..." 
+                        class="w-full px-4 py-3.5 pl-12 rounded-xl bg-[#F8FDF9] text-slate-900 border-2 border-[#A3E4BE] focus:border-[#005A2B] focus:bg-white focus:ring-3 focus:ring-[#005A2B]/15 outline-hidden text-sm sm:text-base font-semibold transition"
+                      >
+                      <div class="w-8 h-8 rounded-lg bg-[#E3F6EC] text-[#005A2B] flex items-center justify-center absolute left-2.5 top-2.5 pointer-events-none">
+                        <i data-lucide="lock" class="w-4 h-4"></i>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Button Đăng nhập vào hệ thống màu Vàng pha Xanh nổi bật -->
+              <button 
+                type="submit" 
+                class="w-full py-4 px-6 rounded-2xl bg-gradient-to-r from-[#FFD700] via-[#A3E635] to-[#10B981] hover:from-[#FFCC00] hover:via-[#84CC16] hover:to-[#059669] text-[#003A1B] font-black text-sm sm:text-base transition shadow-lg border-2 border-white flex items-center justify-center gap-2.5 cursor-pointer"
+              >
+                <i data-lucide="log-in" class="w-5 h-5 text-[#003A1B]"></i>
+                <span>ĐĂNG NHẬP VÀO HỆ THỐNG</span>
+                <i data-lucide="arrow-right" class="w-5 h-5 text-[#003A1B]"></i>
+              </button>
+            </form>
+
+            <!-- Thanh thông tin bảo mật & phân quyền ở chân khung đăng nhập -->
+            <div class="pt-3 border-t border-[#8ED9AE] flex flex-wrap items-center justify-between gap-2 text-[11px] text-[#004D25] font-semibold relative z-10">
+              <span class="inline-flex items-center gap-1">
+                <i data-lucide="lock" class="w-3.5 h-3.5 text-[#005A2B]"></i>
+                Phân quyền theo vai trò
+              </span>
+              <span class="inline-flex items-center gap-1">
+                <i data-lucide="clock" class="w-3.5 h-3.5 text-[#005A2B]"></i>
+                Đồng bộ ca trực 24/7
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- CỘT PHẢI (CHIẾM 45% CHIỀU NGANG): MÔ TẢ QUẦY POS & MÔ TẢ QUẢN TRỊ ĐỒNG BỘ MÀU NỀN & MÀU CHỮ -->
+        <div class="flex flex-col justify-between gap-6">
+          
+          <!-- 1. MÔ TẢ QUẦY THU NGÂN POS BÁN HÀNG (Nền và màu chữ giống Hệ Thống Quản Trị Trung Tâm & Kho Hàng) -->
+          <div id="section-pos" class="scroll-mt-20 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EF] to-[#F5E6D3] text-slate-800 rounded-3xl border-2 border-[#E0C9A6] p-5 sm:p-6 shadow-xl flex-1 flex flex-col justify-between space-y-4">
+            <div class="flex items-start gap-3.5 pb-3 border-b border-[#E0C9A6]">
+              <div class="w-11 h-11 rounded-2xl bg-[#FFA500] text-slate-950 flex items-center justify-center shrink-0 shadow-md">
+                <i data-lucide="store" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#005A2B]">Phân Hệ Bán Hàng (Nhân Viên & Chủ Cửa Hàng)</span>
+                <h2 class="text-lg sm:text-xl font-black text-[#005A2B] leading-[1.5]">Quầy Thu Ngân POS Bán Hàng</h2>
+                <p class="text-slate-600 text-xs mt-0.5 leading-[1.5]">
+                  Giao diện bán lẻ 24/7 tối ưu quét mã vạch, thanh toán nhanh, kết ca kiểm két và liên thông kho FEFO.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="barcode" class="w-4 h-4 text-[#005A2B] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Quét Mã & Phím Tắt</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Tìm hàng F2, tra cứu CRM F4 và thu tiền F8.</p>
+              </div>
+
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="qr-code" class="w-4 h-4 text-[#FFA500] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Tiền Mặt & VietQR</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Tự tính tiền thừa, tạo QR động và in bill 80mm.</p>
+              </div>
+
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="clipboard-list" class="w-4 h-4 text-[#0B6A36] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Kho FEFO & Kết Ca</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Kiểm hạn dùng, báo cáo cận date & nộp két.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- 2. MÔ TẢ HỆ THỐNG QUẢN TRỊ TRUNG TÂM (Đồng bộ ngay dưới Quầy POS) -->
+          <div id="section-admin" class="scroll-mt-20 bg-gradient-to-br from-[#FFFDF9] via-[#FAF6EF] to-[#F5E6D3] text-slate-800 rounded-3xl border-2 border-[#E0C9A6] p-5 sm:p-6 shadow-xl flex-1 flex flex-col justify-between space-y-4">
+            <div class="flex items-start gap-3.5 pb-3 border-b border-[#E0C9A6]">
+              <div class="w-11 h-11 rounded-2xl bg-[#005A2B] text-[#FFD700] flex items-center justify-center shrink-0 shadow-md">
+                <i data-lucide="layout-dashboard" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <span class="text-[10px] sm:text-[11px] font-extrabold uppercase tracking-wider text-[#005A2B]">Phân Hệ Điều Hành (Chủ Cửa Hàng & Kho Nhân Viên)</span>
+                <h2 class="text-lg sm:text-xl font-black text-[#005A2B] leading-[1.5]">Hệ Thống Quản Trị Trung Tâm & Kho Hàng</h2>
+                <p class="text-slate-600 text-xs mt-0.5 leading-[1.5]">
+                  Chủ cửa hàng điều hành toàn diện doanh thu, nhân sự, duyệt báo cáo; Nhân viên quản lý kho & hạn dùng FEFO.
+                </p>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="bar-chart-3" class="w-4 h-4 text-[#005A2B] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Doanh Thu & Hóa Đơn</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Biểu đồ trực quan theo giờ và tra cứu bill.</p>
+              </div>
+
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="calendar-clock" class="w-4 h-4 text-[#FFA500] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Xả Date & Trả Hàng</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Duyệt báo cáo NV, giảm giá hoặc trả NCC.</p>
+              </div>
+
+              <div class="bg-white p-3 rounded-2xl border border-[#E0C9A6] flex flex-col gap-1 shadow-2xs">
+                <div class="flex items-center gap-1.5">
+                  <i data-lucide="shield-check" class="w-4 h-4 text-[#0B6A36] shrink-0"></i>
+                  <h3 class="text-xs font-bold text-[#005A2B] leading-[1.5]">Nhân Sự, CRM & Két</h3>
+                </div>
+                <p class="text-[11px] text-slate-600 leading-[1.5]">Quản lý ca trực, xét hạng CRM và lưu sổ kết ca.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Scripts -->
+  <script src="js/data.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function handleRoleSelectChange(role) {
+      const emailEl = document.getElementById('home-login-email');
+      const passEl = document.getElementById('home-login-password');
+      if (role === 'Chủ cửa hàng' && (!emailEl.value || emailEl.value === 'cashier@emart.vn')) {
+        emailEl.value = 'admin@emart.vn';
+        passEl.value = '123';
+      } else if (role === 'Nhân viên thu ngân' && (!emailEl.value || emailEl.value === 'admin@emart.vn')) {
+        emailEl.value = 'cashier@emart.vn';
+        passEl.value = '123';
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const homeLoginForm = document.getElementById('home-login-form');
+      if (homeLoginForm) {
+        homeLoginForm.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const role = document.getElementById('home-login-role').value;
+          const email = document.getElementById('home-login-email').value.trim();
+          const pass = document.getElementById('home-login-password').value.trim();
+
+          const errBox = document.getElementById('home-login-error');
+          const errText = document.getElementById('home-login-error-text');
+
+          if (!role) {
+            errBox.classList.remove('hidden');
+            errText.innerText = "Vui lòng chọn vai trò làm việc!";
+            return;
+          }
+
+          const res = await login(email, pass, role);
+
+          if (res.success) {
+            if (res.user.role === 'Chủ cửa hàng') {
+              window.location.href = 'dashboard.html';
+            } else {
+              window.location.href = 'pos.html';
+            }
+          } else {
+            errBox.classList.remove('hidden');
+            errText.innerText = res.message;
+          }
+        });
+      }
+
+      if (window.lucide) {
+        lucide.createIcons();
+      }
+    });
+  </script>
+</body>
+</html>

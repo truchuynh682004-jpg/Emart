@@ -1,0 +1,15 @@
+
+FROM node:24-bookworm-slim
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm ci --omit=dev
+
+COPY server ./server
+COPY client ./client
+
+EXPOSE 3000
+
+CMD ["npm", "start"]

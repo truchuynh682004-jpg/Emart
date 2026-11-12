@@ -362,10 +362,20 @@ function saveProducts(products) {
 
 function getStaffList() {
   let staff = getStorage("emart_staff", null);
+
   if (!staff) {
     staff = DEFAULT_STAFF;
     setStorage("emart_staff", staff);
   }
+
+  // Đồng bộ tên chủ cửa hàng theo dữ liệu mặc định
+  const owner = staff.find(s => s.id === "st-01");
+
+  if (owner && owner.name !== "Admin") {
+    owner.name = "Admin";
+    setStorage("emart_staff", staff);
+  }
+
   return staff;
 }
 

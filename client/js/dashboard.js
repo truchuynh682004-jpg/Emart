@@ -2903,6 +2903,26 @@ function openAddStaffModal() {
   document.getElementById("staff-name").value = "";
   document.getElementById("staff-email").value = "";
   document.getElementById("staff-password").value = "";
+  // Ẩn và xóa mật khẩu xác nhận của chủ cửa hàng
+const ownerPasswordGroup = document.getElementById("owner-current-password-group");
+const currentPasswordInput = document.getElementById("staff-current-password");
+
+if (ownerPasswordGroup) {
+    ownerPasswordGroup.classList.add("hidden");
+}
+
+if (currentPasswordInput) {
+    currentPasswordInput.value = "";
+    currentPasswordInput.required = false;
+}
+
+// Khôi phục trạng thái mật khẩu khi thêm thu ngân
+const staffPasswordInput = document.getElementById("staff-password");
+
+if (staffPasswordInput) {
+    staffPasswordInput.required = true;
+    staffPasswordInput.placeholder = "Nhập mật khẩu";
+}
   document.getElementById("staff-phone").value = "";
   document.getElementById("staff-role").value = "Nhân viên thu ngân";
   document.getElementById("staff-role").disabled = false;
@@ -3012,10 +3032,57 @@ async function saveStaffFromModal(e) {
             const currentEmployee = listResult.data.find(
                 s => Number(s.EmployeeID) === Number(id)
             );
-
             if (!currentEmployee) {
-                throw new Error("Không tìm thấy nhân viên!");
-            }
+    throw new Error("Không tìm thấy nhân viên!");
+}
+            // Kiểm tra tài khoản chủ cửa hàng
+const isOwner = currentEmployee.Role === "Chủ cửa hàng";
+
+if (isOwner) {
+    const currentPassword = document.getElementById("staff-current-password")?.value.trim();
+    const newPassword = password;
+
+    if (!currentPassword) {
+        showToast("Vui lòng nhập mật khẩu hiện tại để xác nhận!", "error");
+        return;
+    }
+
+    const response = await fetch("/api/auth/update-owner-profile", {
+        method: "PUT",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            email: currentEmployee.Email,
+            currentPassword,
+            fullName: name,
+            newEmail: email,
+            phone,
+            newPassword
+        })
+    });
+
+    const result = await response.json();
+
+    if (!response.ok || !result.success) {
+        throw new Error(result.message || "Không thể cập nhật tài khoản chủ cửa hàng!");
+    }
+
+    // Đồng bộ thông tin tài khoản đang đăng nhập
+    const sessionUser = JSON.parse(localStorage.getItem("emart_current_user") || "{}");
+
+    sessionUser.name = result.user.name;
+    sessionUser.email = result.user.email;
+    sessionUser.phone = result.user.phone;
+
+    localStorage.setItem("emart_current_user", JSON.stringify(sessionUser));
+
+    closeStaffModal();
+    await renderStaffTable();
+
+    showToast("Cập nhật tài khoản chủ cửa hàng thành công!", "success");
+    return;
+}
 
             employeeCode = currentEmployee.EmployeeCode;
 
@@ -3140,20 +3207,43 @@ async function editStaff(staffId) {
         const roleSelect = document.getElementById("staff-role");
 
         // Không cho phép sửa vai trò hoặc trạng thái chủ cửa hàng
-        if (s.Role === "Chủ cửa hàng") {
-            roleSelect.disabled = true;
+if (s.Role === "Chủ cửa hàng") {
+    roleSelect.disabled = true;
 
-            if (statusSelect) {
-                statusSelect.value = "Đang làm việc";
-                statusSelect.disabled = true;
-            }
-        } else {
-            roleSelect.disabled = false;
+    if (statusSelect) {
+        statusSelect.value = "Đang làm việc";
+        statusSelect.disabled = true;
+    }
 
-            if (statusSelect) {
-                statusSelect.disabled = false;
-            }
-        }
+    // Hiện ô xác nhận mật khẩu hiện tại
+    const ownerPasswordGroup = document.getElementById("owner-current-password-group");
+    const currentPasswordInput = document.getElementById("staff-current-password");
+
+    if (ownerPasswordGroup) ownerPasswordGroup.classList.remove("hidden");
+    if (currentPasswordInput) {
+        currentPasswordInput.value = "";
+        currentPasswordInput.required = true;
+    }
+
+    passwordInput.placeholder = "Để trống nếu không đổi mật khẩu";
+
+} else {
+    roleSelect.disabled = false;
+
+    if (statusSelect) {
+        statusSelect.disabled = false;
+    }
+
+    // Ẩn ô xác nhận mật khẩu của chủ cửa hàng
+    const ownerPasswordGroup = document.getElementById("owner-current-password-group");
+    const currentPasswordInput = document.getElementById("staff-current-password");
+
+    if (ownerPasswordGroup) ownerPasswordGroup.classList.add("hidden");
+    if (currentPasswordInput) {
+        currentPasswordInput.value = "";
+        currentPasswordInput.required = false;
+    }
+}
 
         const modal = document.getElementById("staff-modal");
         modal.classList.remove("hidden");
